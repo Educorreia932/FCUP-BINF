@@ -2,12 +2,10 @@ from rich import print
 
 def read_seq_from_file(filename):
     """ Reads a sequence from a multi-line text file. """
+
     fh = open(filename, "r")
     lines = fh.readlines()
-    seq = ""
-
-    for l in lines:
-        seq += l.replace("\n", "")
+    seq = "".join(line.replace("\n", "") for line in lines)
     
     fh.close()
     
@@ -68,6 +66,7 @@ def reverse_complement (dna_seq):
 
 def translate_codon (cod):
     """Translates a codon into an aminoacid using an internal dictionary with the standard genetic code."""
+
     tc = {
         "GCT":"A", "GCC":"A", "GCA":"A", "GCG":"A",
         "TGT":"C", "TGC":"C",
@@ -98,7 +97,7 @@ def translate_codon (cod):
         return None
 
 def translate_seq (dna_seq, ini_pos = 0):
-    """ Translates a DNA sequence into an aminoacid sequence. """
+    """Translates a DNA sequence into an aminoacid sequence."""
 
     assert validate_dna(dna_seq), "Invalid DNA sequence"
 
@@ -119,18 +118,22 @@ def codon_usage(dna_seq, aa):
 
 def reading_frames (dna_seq):
     """Computes the six reading frames of a DNA sequence (including the reverse complement."""
+
     assert validate_dna(dna_seq), "Invalid DNA sequence"
+
     res = []
-    res.append(translate_seq(dna_seq,0))
-    res.append(translate_seq(dna_seq,1))
-    res.append(translate_seq(dna_seq,2))
+
+    for i in range(3):
+        res.append(translate_seq(dna_seq, i))
+
     rc = reverse_complement(dna_seq)
-    res.append(translate_seq(rc,0))
-    res.append(translate_seq(rc,1))
-    res.append(translate_seq(rc,2))
+    
+    for i in range(3):
+        res.append(translate_seq(rc, i))
+    
     return res
 
-def all_proteins_rf (aa_seq):
+def all_proteins_rf(aa_seq):
     """Computes all posible proteins in an aminoacid sequence."""
     aa_seq = aa_seq.upper()
     current_prot = []
@@ -152,28 +155,30 @@ def all_proteins_rf (aa_seq):
 
     return proteins
 
-def all_orfs (dna_seq):
+def all_orfs(dna_seq):
     """Computes all possible proteins for all open reading frames."""
-    assert validate_dna(dna_seq), "Invalid DNA sequence"
     res = []
-    # complete
-    # ...
+
+    for frame in reading_frames(dna_seq):
+        res += all_proteins_rf(frame)
+
     return res
 
-def all_orfs_ord (dna_seq, minsize = 0):
+def all_orfs_ord(dna_seq, minsize = 0):
     """Computes all possible proteins for all open reading frames. Returns ordered list of proteins with minimum size."""
+    
     assert validate_dna(dna_seq), "Invalid DNA sequence"
-    rfs = reading_frames (dna_seq)
-    res = []
-    # complete
-    # ...
-    return res
+    
+    return filter(lambda x: len(x) > minsize, sorted(all_orfs(dna_seq), key=lambda x: len(x)))
 
 def insert_prot_ord (prot, list_prots):
     ''' inserts prot in list_prots in a sorted way '''
+
     i = 0
+
     while i < len(list_prots) and len(prot) < len(list_prots[i]):
         i += 1
+    
     list_prots.insert(i, prot)
 
 def test_frequency():
@@ -197,7 +202,7 @@ def test_all(seq):
         orfs = all_orfs_ord(seq)
 
         for i, orf in enumerate(orfs):
-            write_seq_to_file(orf, f"orf-{i + 1}.txt")
+            write_seq_to_file(orf, f"orf/orf-{i + 1}.txt")
     
     else: 
         print("DNA sequence is not valid")
