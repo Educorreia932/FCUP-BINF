@@ -169,10 +169,10 @@ def all_orfs_ord(dna_seq, minsize = 0):
     
     assert validate_dna(dna_seq), "Invalid DNA sequence"
     
-    return filter(lambda x: len(x) > minsize, sorted(all_orfs(dna_seq), key=lambda x: len(x)))
+    return list(filter(lambda x: len(x) > minsize, sorted(all_orfs(dna_seq), key=lambda x: len(x), reverse=True)))
 
 def insert_prot_ord (prot, list_prots):
-    ''' inserts prot in list_prots in a sorted way '''
+    """inserts prot in list_prots in a sorted way"""
 
     i = 0
 
@@ -180,6 +180,24 @@ def insert_prot_ord (prot, list_prots):
         i += 1
     
     list_prots.insert(i, prot)
+
+def longest_protein(dna_seq):
+    orfs = all_orfs_ord(dna_seq)
+
+    return orfs[0]
+
+def possible_proteins(dna_seq):
+    proteins = {}
+
+    for i in range(3):
+        proteins[i + 1] = all_proteins_rf(translate_seq(dna_seq, i))
+
+    rc = reverse_complement(dna_seq)
+
+    for i in range(3):
+        proteins[-(i + 1)] = all_proteins_rf(translate_seq(dna_seq, i))
+
+    return proteins
 
 def test_frequency():
     seq_aa = input("Protein sequence:")
@@ -197,12 +215,15 @@ def test_all(seq):
         print(f"[bold]Transcription:[/bold] {transcription(seq)}\n")
         print(f"[bold]Reverse complement:[/bold] {reverse_complement(seq)}\n")
         print(f"[bold]GC Content:[/bold] {gc_content(seq) * 100}%\n")
-        print(f"[bold]Direct translation:[/bold] {translate_seq(seq)}")
+        print(f"[bold]Direct translation:[/bold] {translate_seq(seq)}\n")
 
         orfs = all_orfs_ord(seq)
 
         for i, orf in enumerate(orfs):
             write_seq_to_file(orf, f"orf/orf-{i + 1}.txt")
+
+        print(f"[bold]Longest protein:[/bold] {longest_protein(seq)}\n")
+        print(f"[bold]Possible proteins:[/bold] {possible_proteins(seq)}")
     
     else: 
         print("DNA sequence is not valid")
@@ -217,5 +238,6 @@ def test_sequence_from_file(filename):
     test_all(seq)
 
 if __name__ == "__main__":
-    write_seq_to_file("ATGAGCGACAT" * 10, "seq.txt")
-    test_sequence_from_file("example_Hinfluenzae.txt")
+    # write_seq_to_file("ATGAGCGACAT" * 10, "seq.txt")
+    # test_sequence_from_file("example_Hinfluenzae.txt")
+    test_sequence_from_file("genomic_dna.fa")
