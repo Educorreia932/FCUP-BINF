@@ -258,15 +258,17 @@ def read_fasta_2dictionary(filename):
     with open(filename) as fasta:
         for line in fasta.readlines():
             if line[0] == ">":
-                identifier = line.split()[0][1:]
-
                 if sequence != "":
                     result[identifier] = sequence
+
+                identifier = line.split()[0][1:]
 
                 sequence = ""
 
             else:
                 sequence += line.strip()
+
+        result[identifier] = sequence
 
     return result
 
