@@ -44,9 +44,11 @@ def frequency(seq):
 def gc_content(dna_seq):
     """ Returns the percentage of G and C nucleotides in a DNA sequence. """
     gc_count = 0
+    
     for s in dna_seq:
         if s in "GCgc":
             gc_count += 1
+
     return gc_count / len(dna_seq)
 
 
@@ -150,6 +152,7 @@ def reading_frames(dna_seq):
 
 def all_proteins_rf(aa_seq):
     """Computes all posible proteins in an aminoacid sequence."""
+    
     aa_seq = aa_seq.upper()
     current_prot = []
     proteins = []
@@ -201,21 +204,15 @@ def insert_prot_ord(prot, list_prots):
 
 
 def longest_protein(dna_seq):
-    orfs = all_orfs_ord(dna_seq)
-
-    return orfs[0]
+    return all_orfs_ord(dna_seq)[0]
 
 
 def possible_proteins(dna_seq):
-    proteins = {}
+    proteins = []
 
-    for i in range(3):
-        proteins[i + 1] = all_proteins_rf(translate_seq(dna_seq, i))
-
-    rc = reverse_complement(dna_seq)
-
-    for i in range(3):
-        proteins[-(i + 1)] = all_proteins_rf(translate_seq(dna_seq, i))
+    for i, frame in enumerate(reading_frames(dna_seq)):
+        for protein in all_proteins_rf(frame):
+            proteins.append((i + 1 if i < 3 else -(i - 3 + 1), protein))
 
     return proteins
 
@@ -252,6 +249,8 @@ def test_all(seq):
 
 
 def read_fasta_2dictionary(filename):
+    """Reads a FASTA file to a dictionary"""
+
     result = {}
     sequence = ""
 
@@ -272,6 +271,7 @@ def read_fasta_2dictionary(filename):
 
     return result
 
+
 def test_files():
     fname = input("Insert input filename:")
     test_sequence_from_file(fname)
@@ -286,5 +286,5 @@ def test_sequence_from_file(filename):
 if __name__ == "__main__":
     # write_seq_to_file("ATGAGCGACAT" * 10, "seq.txt")
     # test_sequence_from_file("example_Hinfluenzae.txt")
-    # test_sequence_from_file("genomic_dna.fa")
-    print(read_fasta_2dictionary("PS00727.fasta"))
+    test_sequence_from_file("genomic_dna.fa")
+    # print(read_fasta_2dictionary("PS00727.fasta"))
