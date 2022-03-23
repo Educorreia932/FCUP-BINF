@@ -87,16 +87,20 @@ def reading_frames(dna_seq):
     return res
 
 
-def all_proteins_rf(aa_seq):
-    """Computes all posible proteins in an aminoacid sequence."""
+def all_proteins_rf(aa_seq, coordinates=False):
+    """Computes all possible proteins in an aminoacid sequence."""
 
     aa_seq = aa_seq.upper()
     current_prot = ""
     proteins = []
 
-    for aa in aa_seq:
+    for i, aa in enumerate(aa_seq):
         if aa == "_" and current_prot != "":
-            proteins.append(current_prot)
+            if coordinates:
+                proteins.append((i - len(current_prot), i, current_prot))
+
+            else:
+                proteins.append(current_prot)
 
             current_prot = ""
 
@@ -107,20 +111,24 @@ def all_proteins_rf(aa_seq):
     return proteins
 
 
-def all_orfs(dna_seq):
+def all_orfs(dna_seq, minsize=1, sorted=True, coordinates=False, ):
     """Computes all possible proteins for all open reading frames."""
     res = []
 
+    # If coordinates are enabled, the ORF is the last element of the tuple (Start1,	End1, ORF1). Otherwise, it is just a string
+    def orf(x): return x[2] if coordinates else x
+
     for frame in reading_frames(dna_seq):
-        res += all_proteins_rf(frame)
+        res += all_proteins_rf(frame, coordinates=coordinates)
+
+    # Sort ORFs
+    if sorted:
+        res.sort(key=lambda x: len(orf(x)))
+
+    # Filter ORFs by minimum size
+    res = filter(lambda x: len(orf(x)) >= minsize, res)
 
     return res
-
-
-def all_orfs_ord(dna_seq, minsize=0):
-    """Computes all possible proteins for all open reading frames. Returns ordered list of proteins with minimum size."""
-
-    return list(filter(lambda x: len(x) > minsize, sorted(all_orfs(dna_seq), key=lambda x: len(x), reverse=True)))
 
 
 def read_fasta_2dictionary(filename):
@@ -172,12 +180,13 @@ if __name__ == "__main__":
     print(min(frequency(aa_seq).items(), key=lambda x: x[1]))
 
     # 7. Output protein sequences to file
-    orfs = all_orfs_ord(dna_seq, minsize=40)
+    orfs = all_orfs(dna_seq, minsize=40)
 
     with open("all_potential_proteins.txt", "w") as outfile:
         outfile.writelines(orf + "\n" for orf in orfs)
 
     # 8. Output genomic	coordinates to file
-    
+    orfs_coordinates = all_orfs(dna_seq, minsize=40, coordinates=True)
 
-
+    with open("orf_coordinates.txt", "w") as outfile:
+        outfile.writelines(f"{', '.join(str(x) for x in orf)}\n" for orf in orfs_coordinates)
