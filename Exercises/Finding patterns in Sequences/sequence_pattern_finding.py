@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+from rich import print
+from read_fasta import read_fasta
 
-####################################################################################
-### implementing pattern finding in sequences
-####################################################################################
+
 def search_first_occ(seq, pattern):
     found = False
     i = 0
@@ -56,15 +55,6 @@ def hamming_distance(s, p):
     return distance
 
 
-def test_pat_search():
-    ''' test the implemented function search_all_occurrences here '''
-    seq = input("Input sequence: ")
-    pat = input("Input pattern: ")
-    # ...
-
-
-#test_pat_search()
-
 def simpleBooyerMoore(seq, pattern):
     """Very simplified version of Booyer-Moore with the BCR rule"""
     alphabet = "".join(set(list(seq)))
@@ -107,13 +97,25 @@ def finds_patterns_frequency(seqA, seqB, low, high):
     for k in range(low, high + 1):
         patterns |= set(seqA[i:i + k] for i in range(len(seqA) - k + 1))
 
-    occurrences = {pattern:count for pattern in patterns if (count := len(search_all_occurrences(seqB, pattern))) > 0}
+    occurrences = {pattern: count for pattern in patterns if (count := len(search_all_occurrences(seqB, pattern))) > 0}
 
     return dict(sorted(occurrences.items(), key=lambda x: x[1], reverse=True))
 
-####################################################################################
-### implementing pattern finding in sequences
-####################################################################################
+
+def intron_boundaries(dna_seq):
+    sequences = {}
+
+    for i in search_all_occurrences(dna_seq, "GTG"):
+        for j in search_all_occurrences(dna_seq, "CAG"):
+            # Add intron sequence if a CAG occurs after a GTG signal
+            # If a sequence already exists for a given CAG signal, update it if the new one is shorter
+            if j > i and (j not in sequences or sequences[j] < i):
+                sequences[j] = i
+
+                # Stop at first occurrence of CAG signal
+                break
+
+    return [(item[1], item[0] + 3) for item in sequences.items()]
 
 
 def validate_dna_re(seq):
@@ -221,10 +223,17 @@ def test_RE():
 
 
 def test():
-    seqDNA = "ATAGAATAGATAATAGTC"
+    fasta = read_fasta("test_files/HBA1.DNA.fasta")
+    sequence = fasta["HBA1"]
 
-    print(f"All occurrences: {search_all_occurrences(seqDNA, 'AAT')}")
+    print(f"All occurrences: {search_all_occurrences(sequence, 'AAT')}")
     print(f"Patterns frequency: {finds_patterns_frequency('AAATG', 'CAAATC', 2, 3)}")
+
+    boundaries = intron_boundaries(sequence.upper())
+    introns = [sequence[i:j] for (i, j) in boundaries if len(sequence[i:j]) % 3 == 0]
+
+    print("Introns:")
+    print(introns)
 
 
 if __name__ == "__main__":
