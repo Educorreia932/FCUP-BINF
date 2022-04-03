@@ -458,6 +458,6 @@ if __name__ == "__main__":
         "\nExercise 7.",
         f"""
         {len(orfs)} proteins with {min_len} or more aminoacids were found
-        File all_potential_proteins.txt was written
+        The file all_potential_proteins.txt was written
         """
     )
