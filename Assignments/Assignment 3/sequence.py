@@ -375,10 +375,13 @@ class genome:
 
     ######################## BRUNO — ADDED ########################
     def all_orfs_ord (self, minsize = 0):
-        """Computes all possible proteins for all open reading frames.
-        Returns ordered list of proteins with minimum size."""
+        """
+        Returns all the proteins for the positive reading frames
+        They are ordered by decreasing length
+        """
 
-        rfs = self.reading_frames()
+        # Só quero reading frames no sentido positivo
+        rfs = self.reading_frames()[:3]
         res = []
         for rf in rfs:
             prots = self.all_proteins_rf_modified(rf)
