@@ -315,6 +315,30 @@ class genome:
                     current_prot[i] += aa
         return proteins
 
+    ######################## BRUNO — ADDED ########################
+    @staticmethod
+    def all_proteins_rf_modified (aa_seq):
+        """
+        Similar to `all_proteins_rf`, but for a given region, if 
+        alternative start codons are found, it selects the longest ORF
+        """
+        aa_seq = aa_seq.upper()
+        current_prot = []
+        proteins = []
+        for aa in aa_seq:
+            if aa == "_":
+                if current_prot:
+                    # MODIFICATION —- Append just the protein with maximum size
+                    proteins.append(max(current_prot, key=len))
+                current_prot = []
+            else:
+                if aa == "M":
+                    current_prot.append("")
+                for i in range(len(current_prot)):
+                    current_prot[i] += aa
+        return proteins
+    ########################################################################
+
     def orf(self, ini_pos: int = 0,  reverse_comp: bool = False, minsize: int = 0) -> list():
         """
         Find proteins in specific reading frame
@@ -336,18 +360,39 @@ class genome:
         Computes all possible proteins for all open reading frames.
         """
         rfs = self.reading_frames()
-        proteins = [self.all_proteins_rf(rf) for rf in rfs]
+        proteins = [self.all_proteins_rf_modified(rf) for rf in rfs] # BRUNO —- Alterei aqui
         return proteins
 
-    def all_orfs_ord(self, minsize = 0):
-        """
-        Computes all possible proteins for all open reading frames. 
-        Returns ordered list of proteins with minimum size.
-        """
-        orfs = self.all_orfs()
-        for i in range(len(orfs)):
-            orfs[i].sort(key = len, reverse = True)
-        return list(filter(lambda orf: len(orf)>minsize, orfs))
+    # def all_orfs_ord(self, minsize = 0):
+    #     """
+    #     Computes all possible proteins for all open reading frames. 
+    #     Returns ordered list of proteins with minimum size.
+    #     """
+    #     orfs = self.all_orfs()
+    #     for i in range(len(orfs)):
+    #         orfs[i].sort(key = len, reverse = True)
+    #     return list(filter(lambda orf: len(orf)>minsize, orfs))
+
+    ######################## BRUNO — ADDED ########################
+    def all_orfs_ord (self, minsize = 0):
+        """Computes all possible proteins for all open reading frames.
+        Returns ordered list of proteins with minimum size."""
+
+        rfs = self.reading_frames()
+        res = []
+        for rf in rfs:
+            prots = self.all_proteins_rf_modified(rf)
+            for p in prots:
+                if len(p) >= minsize: 
+                    self.insert_prot_ord(p, res)
+        return res
+
+    def insert_prot_ord (self, prot, list_prots):
+        i=0
+        while (i < len(list_prots)) and (len(prot) < len(list_prots[i])):
+            i += 1
+        list_prots.insert(i, prot)
+    ########################################################################
 
     def __str__(self):
         return self.seq
@@ -363,29 +408,39 @@ if __name__ == "__main__":
     covid_sequence.read_from_fasta(
         seq_file
     )
+    
     print(
         "Exercise 1. \n Sequence Length:",
         len(covid_sequence.seq)
     )
+    
     print(
-        "Exercise 2. \n Nucleotides Frequency:",
+        "\nExercise 2. \n Nucleotides Frequency:",
         covid_sequence.nucleotides_frequency(percentage=True)
     )
+    
     print(
-        "Exercise 3. \n GC Content:",
+        "\nExercise 3. \n GC Content:",
         covid_sequence.gc_content()
     )
+    
     print(
-        "Exercise 4. \n Nr Start Codons in Poistive Reading Frames:",
+        "\nExercise 4. \n Nr Start Codons in Poistive Reading Frames:",
         sum( [covid_sequence.translate_seq(ini_pos = pos).count("M") for pos in range(0,3)] )
     )
+    
     print(
-        "Exercise 5. \n Nr Stop Codons in Poistive Reading Frames:",
+        "\nExercise 5. \n Nr Stop Codons in Poistive Reading Frames:",
         sum( [covid_sequence.translate_seq(ini_pos = pos).count("_") for pos in range(0,3)] )
     )
+    
+    # Como não sabíamos se era suposto colocar os codões mais/menos frequente por
+    # reading frame ou de todos os reading frames, colocámos tanto os codões
+    # mais/menos frequentes por reading frame, bem como os codões mais/menos
+    # frequentes de todos os reading frames
     ORF_freqs = covid_sequence.min_max_codon_freq(ini_pos=[0,1,2])
     print(
-        "Exercise 6. Codons Frequency:",
+        "\nExercise 6. Codons Frequency:",
         f""" 
             ORF | Most Frequent | Less Frequent
             0 | {ORF_freqs[0]['max_codon']} | {ORF_freqs[0]['min_codon']}
@@ -394,8 +449,15 @@ if __name__ == "__main__":
             Total | {ORF_freqs['total']['max_codon']} | {ORF_freqs['total']['min_codon']}
         """
     )
+
+    min_len = 40
+    orfs = covid_sequence.all_orfs_ord(min_len)
+    with open("all_potential_proteins.txt", "w") as outfile:
+        outfile.writelines(orf + "\n" for orf in orfs)
     print(
-        "Exercise 7."
+        "\nExercise 7.",
+        f"""
+        {len(orfs)} proteins with {min_len} or more aminoacids were found
+        File all_potential_proteins.txt was written
+        """
     )
-    proteins = [covid_sequence.orf(rf, minsize=40) for rf in [0,1,2]] # To-do Bruno Vaz (?)
-    #print(proteins)
