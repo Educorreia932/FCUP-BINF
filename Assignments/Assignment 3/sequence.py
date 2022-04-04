@@ -317,7 +317,7 @@ class genome:
 
     ######################## BRUNO — ADDED ########################
     @staticmethod
-    def all_proteins_rf_modified (aa_seq):
+    def all_proteins_rf_modified (aa_seq, n):
         """
         Similar to `all_proteins_rf`, but for a given region, if 
         alternative start codons are found, it selects the longest ORF
@@ -325,18 +325,39 @@ class genome:
         aa_seq = aa_seq.upper()
         current_prot = []
         proteins = []
+        # Lista com coordenadas (Start, End)
+        coords = []
+        # Variável auxiliar p/ guardar coordenadas 
+        # (vai corresponder à coordenada de início)
+        x = n
+        # Counter para saber em que coordenada estamos
+        counter = n
+        # Flag para saber se uma nova coordenada já foi
+        # atribuida a x. Isto porque, se a sequência de AA
+        # for MAMFT, x primeiro ficaria com a coordenada do
+        # primerio M, mas depois teria a coordenada do segundo M
+        # Nós só queremos a coordenada do primeiro M que
+        # corresponderá à maior sequência
+        flag = 0
         for aa in aa_seq:
             if aa == "_":
                 if current_prot:
                     # MODIFICATION —- Append just the protein with maximum size
                     proteins.append(max(current_prot, key=len))
+                    coords.append((x, counter+3)) # Para contar com o stop codon
                 current_prot = []
+                flag = 0 # Quando chegamos a um stop codon, fazemos reset à flag
             else:
                 if aa == "M":
                     current_prot.append("")
+                    if flag == 0: # Se estivermos num aa inicial (M) 
+                        # e ainda não tivermos atribuido valor a x
+                        x = counter # Então x passa a ter o valor da coordenada atual
+                        flag = 1 # E a flag fica ativa
                 for i in range(len(current_prot)):
                     current_prot[i] += aa
-        return proteins
+            counter+=3
+        return proteins, coords
     ########################################################################
 
     def orf(self, ini_pos: int = 0,  reverse_comp: bool = False, minsize: int = 0) -> list():
@@ -383,18 +404,29 @@ class genome:
         # Só quero reading frames no sentido positivo
         rfs = self.reading_frames()[:3]
         res = []
+        # Counter para saber em que orf estou
+        orf_counter = 0
+        # Counter para saber qual o reading frame
+        rf_counter = 0
+        # Lista de listas com coordenadas e orf
+        coords_all = []
         for rf in rfs:
-            prots = self.all_proteins_rf_modified(rf)
-            for p in prots:
+            prots, coords = self.all_proteins_rf_modified(rf, rf_counter)
+            rf_counter+=1
+            for p, c in zip(prots, coords):
                 if len(p) >= minsize: 
-                    self.insert_prot_ord(p, res)
-        return res
+                    orf_counter+=1
+                    #self.insert_prot_ord(p, res)
+                    res.append(p)
+                    coords_all.append((c[0], c[1], orf_counter))
+        return res, coords_all
 
-    def insert_prot_ord (self, prot, list_prots):
-        i=0
-        while (i < len(list_prots)) and (len(prot) < len(list_prots[i])):
-            i += 1
-        list_prots.insert(i, prot)
+    # Função para colocar elementos numa lista por ordem decresecente de tamanho
+    # def insert_prot_ord (self, prot, list_prots):
+    #     i=0
+    #     while (i < len(list_prots)) and (len(prot) < len(list_prots[i])):
+    #         i += 1
+    #     list_prots.insert(i, prot)
     ########################################################################
 
     def __str__(self):
@@ -454,7 +486,7 @@ if __name__ == "__main__":
     )
 
     min_len = 40
-    orfs = covid_sequence.all_orfs_ord(min_len)
+    orfs, coords = covid_sequence.all_orfs_ord(min_len)
     with open("all_potential_proteins.txt", "w") as outfile:
         outfile.writelines(orf + "\n" for orf in orfs)
     print(
@@ -464,3 +496,16 @@ if __name__ == "__main__":
         The file all_potential_proteins.txt was written
         """
     )
+
+    with open("orf_coordinates.txt", "w") as outfile:
+        outfile.writelines(str(x[0]) + ', ' + str(x[1]) + ', ' + str(x[2]) + "\n" for x in coords)
+    print(
+        "\nExercise 8.",
+        """
+        The file orf_coordinates.txt was written
+        """
+    )
+
+
+    #print([len(a) for a in orfs])
+    #print([(x[1]-x[0])/3-1 for x in coords])
