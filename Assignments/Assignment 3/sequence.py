@@ -1,12 +1,9 @@
 """
 Class with methods to read, transcribe, translate and get features from DNA or RNA genomes
+
 """
-
-import sys
-
 from typing import Union
 from collections import Counter
-
 
 class genome:
     def __init__(self):
@@ -26,10 +23,8 @@ class genome:
         
         :param sequence: string composed by sequence of DNA or RNA
         """
-        if (not isinstance(sequence, str)):
-            raise TypeError("Sequence must be a string")
-        if len(sequence) < 3:
-            raise ValueError("Sequence must have at least one codon")
+        if (not isinstance(sequence, str)): raise TypeError("Sequence must be a string")
+        if len(sequence) < 3: raise ValueError("Sequence must have at least one codon")
 
         self.isDNA = self.validate_dna(sequence)
         self.isRNA = False
@@ -38,7 +33,7 @@ class genome:
             self.isRNA = self.validate_rna(sequence)
 
         if not self.isDNA and not self.isRNA:
-            raise ValueError("Sequence is not valid")
+            raise ValueError("Sequence is not valid") 
 
         self.seq = sequence.upper()
 
@@ -50,9 +45,9 @@ class genome:
         lines = fh.readlines()
         seq = ""
         for l in lines:
-            seq += l.replace("\n", "")
+            seq += l.replace("\n","")
         fh.close()
-
+        
         self.read_from_str(seq)
 
     def read_from_fasta(self, filename):
@@ -78,8 +73,10 @@ class genome:
             result[identifier] = sequence
 
         self.read_from_str(sequence)
+        
 
-    @staticmethod
+        
+    @staticmethod 
     def validate_dna(dna_seq):
         """ 
         Checks if DNA sequence is valid. Returns True is sequence is valid, or False otherwise. 
@@ -89,6 +86,7 @@ class genome:
         seqm = dna_seq.upper()
         valid = seqm.count("A") + seqm.count("C") + seqm.count("G") + seqm.count("T")
         return valid == len(seqm)
+
 
     @staticmethod
     def validate_rna(rna_seq):
@@ -108,7 +106,7 @@ class genome:
         :param percentage: Calculates relative frequency in percentage if true
         """
         if percentage:
-            return {x: 100 * self.seq.count(x) / len(self.seq) for x in set(self.seq)}
+            return {x: 100*self.seq.count(x) / len(self.seq) for x in set(self.seq)}
 
         else:
             return {x: self.seq.count(x) for x in set(self.seq)}
@@ -117,27 +115,24 @@ class genome:
         """ 
         Function that computes the RNA corresponding to the transcription of the DNA sequence provided. 
         """
-        if self.isRNA:
-            raise ValueError("RNA can't be trancribed")
-        return self.__class__.read_from_str(self.seq.replace("T", "U"))
+        if self.isRNA: raise ValueError("RNA can't be trancribed")
+        return self.__class__.read_from_str(self.seq.replace("T","U"))
 
     def back_transcribe(self):
         """ 
         Function that computes the RNA corresponding to the transcription of the DNA sequence provided. 
         """
-        if self.isDNA:
-            raise ValueError("DNA can't be back trancribed")
-        return self.__class__.read_from_str(self.seq.replace("U", "T"))
+        if self.isDNA: raise ValueError("DNA can't be back trancribed")
+        return self.__class__.read_from_str(self.seq.replace("U","T"))
 
     def reverse_complement(self):
         """ 
         Computes the reverse complement of the inputted DNA sequence. 
         """
-        if self.isRNA:
-            raise ValueError("There is no reverse complement of RNA sequence")
+        if self.isRNA: raise ValueError("There is no reverse complement of RNA sequence")
 
         rev = self.seq[::-1]
-        complement_transfer = {
+        complement_transfer = { 
             "A": "T",
             "T": "A",
             "C": "G",
@@ -146,7 +141,7 @@ class genome:
         comp_rev = ""
         for letter in rev:
             comp_rev += complement_transfer[letter.upper()]
-
+            
         return comp_rev
 
     def gc_content(self):
@@ -155,15 +150,15 @@ class genome:
         """
         gc_count = 0
         for s in self.seq:
-            if s in "GCgc":
-                gc_count += 1
+            if s in "GCgc": gc_count += 1
         return gc_count / len(self.seq)
 
     def gc_content_subseq(self, k=100):
         """ 
         Returns GC content of non-overlapping sub-sequences of size k. 
         """
-        return [self.gc_content(self.seq[i:i + k]) for i in range(0, len(self.seq) - (k - 1), k)]
+        return [self.gc_content(self.seq[i:i+k]) for i in range(0, len(self.seq) - (k-1), k)]
+
 
     @staticmethod
     def translate_codon(cod: str):
@@ -174,31 +169,29 @@ class genome:
         """
 
         tc = {
-            "GCT": "A", "GCC": "A", "GCA": "A", "GCG": "A",
-            "TGT": "C", "TGC": "C",
-            "GAT": "D", "GAC": "D",
-            "GAA": "E", "GAG": "E",
-            "TTT": "F", "TTC": "F",
-            "GGT": "G", "GGC": "G", "GGA": "G", "GGG": "G",
-            "CAT": "H", "CAC": "H",
-            "ATA": "I", "ATT": "I", "ATC": "I",
-            "AAA": "K", "AAG": "K",
-            "TTA": "L", "TTG": "L", "CTT": "L", "CTC": "L", "CTA": "L", "CTG": "L",
-            "ATG": "M", "AAT": "N", "AAC": "N",
-            "CCT": "P", "CCC": "P", "CCA": "P", "CCG": "P",
-            "CAA": "Q", "CAG": "Q",
-            "CGT": "R", "CGC": "R", "CGA": "R", "CGG": "R", "AGA": "R", "AGG": "R",
-            "TCT": "S", "TCC": "S", "TCA": "S", "TCG": "S", "AGT": "S", "AGC": "S",
-            "ACT": "T", "ACC": "T", "ACA": "T", "ACG": "T",
-            "GTT": "V", "GTC": "V", "GTA": "V", "GTG": "V",
-            "TGG": "W",
-            "TAT": "Y", "TAC": "Y",
-            "TAA": "_", "TAG": "_", "TGA": "_"
+            "GCT":"A", "GCC":"A", "GCA":"A", "GCG":"A",
+            "TGT":"C", "TGC":"C",
+            "GAT":"D", "GAC":"D",
+            "GAA":"E", "GAG":"E",
+            "TTT":"F", "TTC":"F",
+            "GGT":"G", "GGC":"G", "GGA":"G", "GGG":"G",
+            "CAT":"H", "CAC":"H",
+            "ATA":"I", "ATT":"I", "ATC":"I",
+            "AAA":"K", "AAG":"K",
+            "TTA":"L", "TTG":"L", "CTT":"L", "CTC":"L", "CTA":"L", "CTG":"L",
+            "ATG":"M", "AAT":"N", "AAC":"N",
+            "CCT":"P", "CCC":"P", "CCA":"P", "CCG":"P",
+            "CAA":"Q", "CAG":"Q",
+            "CGT":"R", "CGC":"R", "CGA":"R", "CGG":"R", "AGA":"R", "AGG":"R",
+            "TCT":"S", "TCC":"S", "TCA":"S", "TCG":"S", "AGT":"S", "AGC":"S",
+            "ACT":"T", "ACC":"T", "ACA":"T", "ACG":"T",
+            "GTT":"V", "GTC":"V", "GTA":"V", "GTG":"V",
+            "TGG":"W",
+            "TAT":"Y", "TAC":"Y",
+            "TAA":"_", "TAG":"_", "TGA":"_"
         }
-        if cod in tc:
-            return tc[cod]
-        else:
-            return None
+        if cod in tc: return tc[cod]
+        else: return None
 
     def translate_seq(self, reverse_comp: bool = False, ini_pos: int = 0) -> list():
         """ 
@@ -212,28 +205,26 @@ class genome:
         """
         dna_seq = self.seq if self.isDNA else self.back_transcribe().seq
 
-        if reverse_comp:
+        if reverse_comp: 
             dna_seq = self.reverse_complement()
 
         seq_aa = ""
-        for start_triple in range(ini_pos, len(dna_seq) - (ini_pos + 2), 3):
-            seq_aa += self.translate_codon(dna_seq[start_triple:start_triple + 3])
+        for start_triple in range(ini_pos, len(dna_seq)-(ini_pos+2),3):
+            seq_aa += self.translate_codon(dna_seq[start_triple:start_triple+3])
         return seq_aa
 
-    def codon_frequency(self, reverse_comp: bool = False, ini_pos: int = 0) -> dict():
+    def codon_frequency(self,  reverse_comp: bool = False, ini_pos: int = 0) -> dict():
         """
         """
         seq = self.seq
-        if reverse_comp:
+        if reverse_comp: 
             seq = self.reverse_complement()
         freq = dict()
 
-        for start_triple in range(ini_pos, len(seq) - (ini_pos + 2), 3):
-            codon = seq[start_triple:start_triple + 3]
-            if codon in freq.keys():
-                freq[codon] += 1
-            else:
-                freq[codon] = 1
+        for start_triple in range(ini_pos, len(seq)-(ini_pos+2),3):
+            codon = seq[start_triple:start_triple+3]
+            if codon in freq.keys():  freq[codon] += 1
+            else: freq[codon] = 1
 
         return freq
 
@@ -249,18 +240,18 @@ class genome:
         total_freq = Counter({})
         for rf in ini_pos:
             cod_freq = self.codon_frequency(ini_pos=rf)
-            max_codon = max(cod_freq, key=cod_freq.get)
-            min_codon = min(cod_freq, key=cod_freq.get)
+            max_codon = max(cod_freq , key = cod_freq.get)
+            min_codon = min(cod_freq , key = cod_freq.get)
             ORF_freqs[rf] = {
-                "max_codon": {max_codon: cod_freq[max_codon]},
+                "max_codon": {max_codon: cod_freq[max_codon]}, 
                 "min_codon": {min_codon: cod_freq[min_codon]}
             }
             total_freq += Counter(cod_freq)
 
-        max_codon = max(total_freq, key=total_freq.get)
-        min_codon = min(total_freq, key=total_freq.get)
+        max_codon = max(total_freq, key = total_freq.get)
+        min_codon = min(total_freq, key = total_freq.get)
         ORF_freqs["total"] = {
-            "max_codon": {max_codon: total_freq[max_codon]},
+            "max_codon": {max_codon: total_freq[max_codon]}, 
             "min_codon": {min_codon: total_freq[min_codon]}
         }
         return ORF_freqs
@@ -274,15 +265,14 @@ class genome:
         seqm = self.seq if self.isDNA else self.back_transcribe().seq
         dic = {}
         total = 0
-        for i in range(0, len(seqm) - 2, 3):
-            cod = seqm[i:i + 3]
+        for i in range(0, len(seqm)-2, 3):
+            cod = seqm[i:i+3]
             if self.translate_codon(cod) == aa:
                 if cod in dic:
                     dic[cod] += 1
-                else:
-                    dic[cod] = 1
+                else: dic[cod] = 1
                 total += 1
-        if total > 0:
+        if total >0:
             for k in dic:
                 dic[k] /= total
         return dic
@@ -299,38 +289,20 @@ class genome:
         res.append(self.translate_seq(ini_pos=2))
 
         if self.isDNA:
-            res.append(self.translate_seq(reverse_comp=True, ini_pos=0))
-            res.append(self.translate_seq(reverse_comp=True, ini_pos=1))
-            res.append(self.translate_seq(reverse_comp=True, ini_pos=2))
+            res.append(self.translate_seq(reverse_comp = True, ini_pos=0))
+            res.append(self.translate_seq(reverse_comp = True, ini_pos=1))
+            res.append(self.translate_seq(reverse_comp = True, ini_pos=2))
         return res
 
     @staticmethod
-    def all_proteins_rf(aa_seq):
+    def all_proteins_rf(aa_seq: str, overlapping: bool = True, ini_pos: int = 0):
         """
         Computes all posible proteins in an aminoacid sequence.
-        """
-        aa_seq = aa_seq.upper()
-        current_prot = []
-        proteins = []
-        for aa in aa_seq:
-            if aa == "_":
-                if current_prot:
-                    for p in current_prot:
-                        proteins.append(p)
-                    current_prot = []
-            else:
-                if aa == "M":
-                    current_prot.append("")
-                for i in range(len(current_prot)):
-                    current_prot[i] += aa
-        return proteins
 
-    ######################## BRUNO — ADDED ########################
-    @staticmethod
-    def all_proteins_rf_modified(aa_seq, n):
-        """
-        Similar to `all_proteins_rf`, but for a given region, if 
-        alternative start codons are found, it selects the longest ORF
+        :params aa_seq: string representing aa sequence
+        :param overlapping: boolean indicating if overlapping proteins in the same
+            region should be computed, if false only keeps the biggest protein
+            of each region
         """
         aa_seq = aa_seq.upper()
         current_prot = []
@@ -339,9 +311,9 @@ class genome:
         coords = []
         # Variável auxiliar p/ guardar coordenadas
         # (vai corresponder à coordenada de início)
-        x = n
+        x = ini_pos
         # Counter para saber em que coordenada estamos
-        counter = n
+        counter = ini_pos
         # Flag para saber se uma nova coordenada já foi
         # atribuida a x. Isto porque, se a sequência de AA
         # for MAMFT, x primeiro ficaria com a coordenada do
@@ -352,11 +324,13 @@ class genome:
         for aa in aa_seq:
             if aa == "_":
                 if current_prot:
-                    # MODIFICATION —- Append just the protein with maximum size
-                    proteins.append(max(current_prot, key=len))
-                    coords.append((x, counter + 3))  # Para contar com o stop codon
-                current_prot = []
-                flag = 0  # Quando chegamos a um stop codon, fazemos reset à flag
+                    if overlapping:
+                        proteins.append(p for p in current_prot)
+                    else: 
+                        proteins.append(max(current_prot, key=len))
+                    coords.append((x, counter + 3))
+                    current_prot = []
+                    flag = 0
             else:
                 if aa == "M":
                     current_prot.append("")
@@ -368,9 +342,14 @@ class genome:
                     current_prot[i] += aa
             counter += 3
         return proteins, coords
-    ########################################################################
 
-    def orf(self, ini_pos: int = 0, reverse_comp: bool = False, minsize: int = 0) -> list():
+    def orf(
+        self, 
+        ini_pos: int = 0,  
+        reverse_comp: bool = False, 
+        overlapping: bool = True,
+        minsize: int = 0
+    ) -> list():
         """
         Find proteins in specific reading frame
 
@@ -378,41 +357,38 @@ class genome:
         :param ini_pos: ini_pos = 0 -> frame 1
                         ini_pos = 1 -> frame 2
                         ini_pos = 2 -> frame 3
+        :param overlapping: boolean indicating if overlapping proteins in the same
+            region should be computed, if false only keeps the biggest protein
+            of each region
         :param minsize: minimum size of reading of ORF
 
         :returns: list of strings with aminoacid sequence for each protein found
         """
-        rf = self.translate_seq(reverse_comp=reverse_comp, ini_pos=ini_pos)
-        proteins = self.all_proteins_rf(rf)
-        return list(filter(lambda prot: len(prot) > minsize, proteins))
+        rf = self.translate_seq(reverse_comp = reverse_comp, ini_pos=ini_pos)
+        proteins, coords = self.all_proteins_rf(rf, overlapping, ini_pos)
+        res = []
+        # Counter para saber em que orf estou
+        orf_counter = 0
+        # Lista de listas com coordenadas e orf
+        coords_all = []
+        for p, c in zip(proteins, coords):
+            if len(p) >= minsize:
+                orf_counter += 1
+                #self.insert_prot_ord(p, res)
+                res.append(p)
+                coords_all.append((c[0], c[1], orf_counter))
 
-    def all_orfs(self):
+        return res, coords_all
+
+    def all_orfs(self, overlapping: bool = True, minsize: int = 0):
         """
         Computes all possible proteins for all open reading frames.
+
+        :param overlapping: boolean indicating if overlapping proteins in the same
+            region should be computed, if false only keeps the biggest protein
+            of each region
         """
         rfs = self.reading_frames()
-        proteins = [self.all_proteins_rf_modified(rf) for rf in rfs]  # BRUNO —- Alterei aqui
-        return proteins
-
-    # def all_orfs_ord(self, minsize = 0):
-    #     """
-    #     Computes all possible proteins for all open reading frames.
-    #     Returns ordered list of proteins with minimum size.
-    #     """
-    #     orfs = self.all_orfs()
-    #     for i in range(len(orfs)):
-    #         orfs[i].sort(key = len, reverse = True)
-    #     return list(filter(lambda orf: len(orf)>minsize, orfs))
-
-    ######################## BRUNO — ADDED ########################
-    def all_orfs_ord(self, minsize=0):
-        """
-        Returns all the proteins for the positive reading frames
-        They are ordered by decreasing length
-        """
-
-        # Só quero reading frames no sentido positivo
-        rfs = self.reading_frames()[:3]
         res = []
         # Counter para saber em que orf estou
         orf_counter = 0
@@ -421,7 +397,7 @@ class genome:
         # Lista de listas com coordenadas e orf
         coords_all = []
         for rf in rfs:
-            prots, coords = self.all_proteins_rf_modified(rf, rf_counter)
+            prots, coords = self.all_proteins_rf(rf, overlapping, rf_counter)
             rf_counter += 1
             for p, c in zip(prots, coords):
                 if len(p) >= minsize:
@@ -429,15 +405,23 @@ class genome:
                     #self.insert_prot_ord(p, res)
                     res.append(p)
                     coords_all.append((c[0], c[1], orf_counter))
+
         return res, coords_all
 
-    # Função para colocar elementos numa lista por ordem decresecente de tamanho
-    # def insert_prot_ord (self, prot, list_prots):
-    #     i=0
-    #     while (i < len(list_prots)) and (len(prot) < len(list_prots[i])):
-    #         i += 1
-    #     list_prots.insert(i, prot)
-    ########################################################################
+    def all_orfs_ord(self, overlapping: bool= True, minsize = 0):
+        """
+        Computes all possible proteins for all open reading frames. 
+        Returns ordered list of proteins with minimum size.
+
+        :param overlapping: boolean indicating if overlapping proteins in the same
+            region should be computed, if false only keeps the biggest protein
+            of each region
+        """
+        orfs, coords = self.all_orfs(overlapping, minsize)
+        for i in range(len(orfs)):
+            orfs[i].sort(key = len, reverse = True)
+
+        return orfs
 
     def __str__(self):
         return self.seq
@@ -447,7 +431,8 @@ class genome:
 
 
 if __name__ == "__main__":
-    # Read filename from command line arguments
+    import sys
+    import csv
 
     if len(sys.argv) != 2:
         print("Usage: python3 sequence.py <filename>")
@@ -457,7 +442,9 @@ if __name__ == "__main__":
     seq_file = sys.argv[1]
 
     covid_sequence = genome()
-    covid_sequence.read_from_fasta(seq_file)
+    covid_sequence.read_from_fasta(
+        seq_file
+    )
 
     print(
         "Exercise 1. \n Sequence Length:",
@@ -465,32 +452,28 @@ if __name__ == "__main__":
     )
 
     print(
-        "\nExercise 2. \n Nucleotides Frequency:",
+        "Exercise 2. \n Nucleotides Frequency:",
         covid_sequence.nucleotides_frequency(percentage=True)
     )
 
     print(
-        "\nExercise 3. \n GC Content:",
+        "Exercise 3. \n GC Content:",
         covid_sequence.gc_content()
     )
 
     print(
-        "\nExercise 4. \n Nr Start Codons in Poistive Reading Frames:",
-        sum([covid_sequence.translate_seq(ini_pos=pos).count("M") for pos in range(0, 3)])
+        "Exercise 4. \n Nr Start Codons in Poistive Reading Frames:",
+        sum( [covid_sequence.translate_seq(ini_pos = pos).count("M") for pos in range(0,3)] )
     )
 
     print(
-        "\nExercise 5. \n Nr Stop Codons in Poistive Reading Frames:",
-        sum([covid_sequence.translate_seq(ini_pos=pos).count("_") for pos in range(0, 3)])
+        "Exercise 5. \n Nr Stop Codons in Poistive Reading Frames:",
+        sum( [covid_sequence.translate_seq(ini_pos = pos).count("_") for pos in range(0,3)] )
     )
 
-    # Como não sabíamos se era suposto colocar os codões mais/menos frequente por
-    # reading frame ou de todos os reading frames, colocámos tanto os codões
-    # mais/menos frequentes por reading frame, bem como os codões mais/menos
-    # frequentes de todos os reading frames
-    ORF_freqs = covid_sequence.min_max_codon_freq(ini_pos=[0, 1, 2])
+    ORF_freqs = covid_sequence.min_max_codon_freq(ini_pos=[0,1,2])
     print(
-        "\nExercise 6. Codons Frequency:",
+        "Exercise 6. Codons Frequency:",
         f""" 
             ORF | Most Frequent | Less Frequent
             0 | {ORF_freqs[0]['max_codon']} | {ORF_freqs[0]['min_codon']}
@@ -499,22 +482,29 @@ if __name__ == "__main__":
             Total | {ORF_freqs['total']['max_codon']} | {ORF_freqs['total']['min_codon']}
         """
     )
+    rfs = []
+    coords = []
+    for ini_pos in [0,1,2]:
+        rf, coord = covid_sequence.orf(ini_pos, overlapping=False, minsize=40)
+        rfs += rf
+        coords += coord
 
-    min_len = 40
-    orfs, coords = covid_sequence.all_orfs_ord(min_len)
-
+    proteins = []
     with open("all_potential_proteins.txt", "w") as outfile:
-        outfile.writelines(orf + "\n" for orf in orfs)
+        outfile.writelines(protein + "\n" for protein in rfs)
     print(
         "\nExercise 7.",
         f"""
-        {len(orfs)} proteins with {min_len} or more aminoacids were found
+        {len(rfs)} proteins with {40} or more aminoacids were found
         The file all_potential_proteins.txt was written
         """
     )
-
+    
+    c = 0
     with open("orf_coordinates.txt", "w") as outfile:
-        outfile.writelines(str(x[0]) + ', ' + str(x[1]) + ', ' + str(x[2]) + "\n" for x in coords)
+        for x in coords:
+            c += 1
+            outfile.writelines(str(x[0]) + ', ' + str(x[1]) + ', ' + str(c) + "\n")
     print(
         "\nExercise 8.",
         """
@@ -522,5 +512,25 @@ if __name__ == "__main__":
         """
     )
 
-    #print([len(a) for a in orfs])
-    #print([(x[1]-x[0])/3-1 for x in coords])
+    # opening the file using "with" 
+    # statement
+    overlaps = []
+    with open("proteins_86693_757732.csv", 'r') as data:
+        for protein in csv.DictReader(data):
+            max_overlap = 0
+            for coord in coords:
+                if (int(protein["Start"]) <= coord[1]) and (int(protein["Stop"]) >= coord[0]):
+                    overlap = ( min(int(protein["Stop"]), coord[1]) - max(int(protein["Start"]), coord[0]) ) // 3 / int(protein["Length"])
+                    if overlap > max_overlap: max_overlap = overlap
+            overlaps.append((protein["Locus"], f"{int(round(max_overlap*100, 0))}%"))
+
+    with open("orf_overlaps.txt", "w") as outfile:
+        for overlap in overlaps:
+            outfile.writelines(f"{overlap[0], overlap[1]}\n")
+
+    print(
+        "\nExercise 9.",
+        """
+        The file orf_overlaps.txt was written
+        """
+    )
