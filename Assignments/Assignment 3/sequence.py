@@ -524,13 +524,11 @@ if __name__ == "__main__":
                     if overlap > max_overlap: max_overlap = overlap
             overlaps.append((protein["Locus"], f"{int(round(max_overlap*100, 0))}%"))
 
-    with open("orf_overlaps.txt", "w") as outfile:
-        for overlap in overlaps:
-            outfile.writelines(f"{overlap[0], overlap[1]}\n")
+    # with open("orf_overlaps.txt", "w") as outfile:
+    #     for overlap in overlaps:
+    #         outfile.writelines(f"{overlap[0], overlap[1]}\n")
 
-    print(
-        "\nExercise 9.",
-        """
-        The file orf_overlaps.txt was written
-        """
-    )
+
+    print('\nExercise 9')
+    for o in overlaps:
+        print('', o)
