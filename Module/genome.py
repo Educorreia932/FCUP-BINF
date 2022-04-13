@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class BioSequence():
     def __init__(self, sequence: str):
         if type(self) == BioSequence:
@@ -36,25 +39,50 @@ class BioSequence():
         else:
             return None
 
-    def translate(k=0):
-        aminoacid_sequence = "".join(self.translate_codon(self.sequence[i:i + 3]) for i in range(k, len(self.sequence, len(self.sequence - k + 2), 3)))
+    def translate(self, k) -> str:
+        a = [self.translate_codon(self.sequence[i:i + 3]) for i in range(k, len(self.sequence) - 2, 3)]
 
-        return Protein(aminoacid_sequence)
+        return "".join(a)
 
-    def all_proteins():
-        pass
+    def compute_ORFs(self, k) -> [ORF]:
+        result = []
+        aminoacid_sequence = self.translate(k)
+        current_orf = ""
+
+        for aminoacid in aminoacid_sequence:
+            # Stop codon
+            if aminoacid == "_" and current_orf != "":
+                result.append(ORF(current_orf))
+
+                current_orf = ""
+
+            # Start codon or on-going sequence
+            elif aminoacid == "M" or current_orf != "":
+                current_orf += aminoacid
+
+        return result
+
+    def all_ORFs(self) -> [ORF]:
+        result = []
+
+        # Frames starting in positions 0, 1 and 2
+        for i in range(3):
+            result += self.compute_ORFs(i)
+
+        return result
 
     def __len__(self) -> int:
         return len(self.sequence)
 
-    def __str__(self) -> int:
+    def __str__(self) -> str:
         return self.sequence
+
 
 class DNA(BioSequence):
     def __init__(self, sequence):
         BioSequence.__init__(self, sequence)
 
-    def reverse_complement(self) -> str:
+    def reverse_complement(self) -> DNA:
         complement = {
             "A": "T",
             "T": "A",
@@ -62,9 +90,9 @@ class DNA(BioSequence):
             "G": "C"
         }
 
-        return "".join(complement[nucleotide] for nucleotide in self.sequence[::-1])
+        return DNA("".join(complement[nucleotide] for nucleotide in self.sequence[::-1]))
 
-    def transcribe(self):
+    def transcribe(self) -> RNA:
         return RNA(self.sequence.replace("T", "U"))
 
 
@@ -72,13 +100,16 @@ class RNA(BioSequence):
     def __init__(self, sequence: str):
         BioSequence.__init__(self, sequence)
 
-    def transcribe(self):
+    def transcribe(self) -> DNA:
         return DNA(self.sequence.replace("U", "T"))
 
 
-class Protein():
+class ORF():
     def __init__(self, sequence: str):
         self.sequence = sequence
+
+    def __str__(self) -> str:
+        return self.sequence
 
 # TODO: Read from file
 # TODO: Validate sequence
