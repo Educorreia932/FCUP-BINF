@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import re
 
 class BioSequence():
     def __init__(self, sequence: str):
         if type(self) == BioSequence:
             raise Exception("BioSequence must be subclassed.")
+
+        if not self.validate(sequence):
+            raise Exception("Sequence is not valid")
 
         self.sequence = sequence
 
@@ -84,6 +88,10 @@ class DNA(BioSequence):
     def __init__(self, sequence):
         BioSequence.__init__(self, sequence)
 
+    @staticmethod
+    def validate(sequence):
+        return bool(re.match(r"^[ACGT]+$", sequence))
+
     def reverse_complement(self) -> DNA:
         complement = {
             "A": "T",
@@ -101,6 +109,10 @@ class DNA(BioSequence):
 class RNA(BioSequence):
     def __init__(self, sequence: str):
         BioSequence.__init__(self, sequence)
+
+    @staticmethod
+    def validate(sequence):
+        return bool(re.match(r"^[ACGU]+$", sequence))
 
     def transcribe(self) -> DNA:
         return DNA(self.sequence.replace("U", "T"))
