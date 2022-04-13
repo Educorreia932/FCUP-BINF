@@ -4,8 +4,8 @@ Class with methods to read, transcribe, translate and get features from DNA or R
 Bruno Vaz - up201705247
 Eduardo Correia - up201806433
 Filipe Justiça - up201606339 
-
 """
+
 from typing import Union
 from collections import Counter
 
@@ -78,8 +78,6 @@ class genome:
 
         self.read_from_str(sequence)
         
-
-        
     @staticmethod 
     def validate_dna(dna_seq):
         """ 
@@ -90,7 +88,6 @@ class genome:
         seqm = dna_seq.upper()
         valid = seqm.count("A") + seqm.count("C") + seqm.count("G") + seqm.count("T")
         return valid == len(seqm)
-
 
     @staticmethod
     def validate_rna(rna_seq):

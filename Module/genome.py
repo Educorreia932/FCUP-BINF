@@ -69,6 +69,8 @@ class BioSequence():
         for i in range(3):
             result += self.compute_ORFs(i)
 
+        # TODO: Compute in both ways, not just positive (perhaps do it only for DNA)
+
         return result
 
     def __len__(self) -> int:
@@ -106,7 +108,11 @@ class RNA(BioSequence):
 
 class ORF():
     def __init__(self, sequence: str):
+        # TODO: Save positions for original DNA (as well as the original DNA)
         self.sequence = sequence
+
+    def __len__(self) -> int:
+        return len(self.sequence)
 
     def __str__(self) -> str:
         return self.sequence
