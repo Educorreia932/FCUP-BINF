@@ -73,7 +73,7 @@ class RNA(BioSequence):
         BioSequence.__init__(self, sequence)
 
     def transcribe(self):
-        return RNA(self.sequence.replace("U", "T"))
+        return DNA(self.sequence.replace("U", "T"))
 
 
 class Protein():
