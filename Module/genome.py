@@ -73,7 +73,12 @@ class BioSequence():
         for i in range(3):
             result += self.compute_ORFs(i)
 
-        # TODO: Compute in both ways, not just positive (perhaps do it only for DNA)
+        # Compute in both ways
+        if type(self) == DNA:
+            reverse_complement = self.reverse_complement()
+
+            for i in range(3):
+                result += reverse_complement.compute_ORFs(i)
 
         return result
 
