@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+
 class BioSequence():
     def __init__(self, sequence: str):
         if type(self) == BioSequence:
@@ -12,6 +13,14 @@ class BioSequence():
 
         self.sequence = sequence
 
+    def __len__(self) -> int:
+        return len(self.sequence)
+
+    def __str__(self) -> str:
+        return self.sequence
+
+
+class NucleicAcid(BioSequence):
     @staticmethod
     def translate_codon(codon: str):
         translation = {
@@ -82,14 +91,8 @@ class BioSequence():
 
         return result
 
-    def __len__(self) -> int:
-        return len(self.sequence)
 
-    def __str__(self) -> str:
-        return self.sequence
-
-
-class DNA(BioSequence):
+class DNA(NucleicAcid):
     def __init__(self, sequence):
         BioSequence.__init__(self, sequence)
 
@@ -110,8 +113,12 @@ class DNA(BioSequence):
     def transcribe(self) -> RNA:
         return RNA(self.sequence.replace("T", "U"))
 
+    @staticmethod
+    def read_from_fasta():
+        return DNA()
 
-class RNA(BioSequence):
+
+class RNA(NucleicAcid):
     def __init__(self, sequence: str):
         BioSequence.__init__(self, sequence)
 
@@ -123,16 +130,14 @@ class RNA(BioSequence):
         return DNA(self.sequence.replace("U", "T"))
 
 
-class ORF():
+class ORF(BioSequence):
     def __init__(self, sequence: str):
-        # TODO: Save positions for original DNA (as well as the original DNA)
-        self.sequence = sequence
+        BioSequence.__init__(self, sequence)
 
-    def __len__(self) -> int:
-        return len(self.sequence)
+    @staticmethod
+    def validate(sequence):
+        return bool(re.match(r"^[A-Z]+$", sequence))
 
-    def __str__(self) -> str:
-        return self.sequence
-
-# TODO: Read from file
-# TODO: Validate sequence
+    @staticmethod
+    def read_from_fasta():
+        return ORF()
