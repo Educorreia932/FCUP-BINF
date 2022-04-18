@@ -5,6 +5,7 @@ from ORF import ORF
 
 import re
 
+
 class NucleicAcid(BioSequence):
     @staticmethod
     def translate_codon(codon: str):
@@ -76,6 +77,7 @@ class NucleicAcid(BioSequence):
 
         return result
 
+
 class DNA(NucleicAcid):
     def __init__(self, sequence):
         BioSequence.__init__(self, sequence)
@@ -100,6 +102,7 @@ class DNA(NucleicAcid):
     @staticmethod
     def read_from_fasta():
         return DNA()
+
 
 class RNA(NucleicAcid):
     def __init__(self, sequence: str):
