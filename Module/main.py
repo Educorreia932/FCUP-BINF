@@ -1,4 +1,4 @@
-from genome import *
+from NucleicAcid import DNA
 
 if __name__ == "__main__":
     sequence = "ATGAAATTATGAATGAGCCTCAGCTGAAGCATCGCGCATCAGACTACGCTCAGACTCAGACTCAGCATTATAGTGAATGTTAATAAATAAAATAA"

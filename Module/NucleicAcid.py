@@ -1,47 +1,9 @@
 from __future__ import annotations
 
+from BioSequence import BioSequence
+from ORF import ORF
+
 import re
-
-
-class BioSequence():
-    def __init__(self, sequence: str):
-        if type(self) == BioSequence:
-            raise Exception("BioSequence must be subclassed.")
-
-        if not self.validate(sequence):
-            raise Exception("Sequence is not valid")
-
-        self.sequence = sequence
-
-    @staticmethod
-    def read_fasta(filename):
-        sequences = {}
-        current_sequence = ""
-
-        with open(filename) as fasta:
-            for line in fasta.readlines():
-                if line[0] == ">":
-                    identifier = line[1:].strip()
-
-                    if current_sequence != "":
-                        sequences[identifier] = current_sequence
-
-                    current_sequence = ""
-
-                else:
-                    current_sequence += line.strip()
-
-        sequences[identifier] = current_sequence
-
-        return sequences
-
-    def __len__(self) -> int:
-        return len(self.sequence)
-
-    def __str__(self) -> str:
-        return self.sequence
-        
-
 
 class NucleicAcid(BioSequence):
     @staticmethod
@@ -114,7 +76,6 @@ class NucleicAcid(BioSequence):
 
         return result
 
-
 class DNA(NucleicAcid):
     def __init__(self, sequence):
         BioSequence.__init__(self, sequence)
@@ -140,7 +101,6 @@ class DNA(NucleicAcid):
     def read_from_fasta():
         return DNA()
 
-
 class RNA(NucleicAcid):
     def __init__(self, sequence: str):
         BioSequence.__init__(self, sequence)
@@ -151,13 +111,3 @@ class RNA(NucleicAcid):
 
     def transcribe(self) -> DNA:
         return DNA(self.sequence.replace("U", "T"))
-
-
-class ORF(BioSequence):
-    def __init__(self, sequence: str):
-        BioSequence.__init__(self, sequence)
-
-    @staticmethod
-    def validate(sequence):
-        return bool(re.match(r"^[A-IK-NP-Z\*-]+$", sequence))
-
