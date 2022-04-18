@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from BioSequence import BioSequence
-from ORF import ORF
+from .BioSequence import BioSequence
+from .ORF import ORF
 
 import re
 

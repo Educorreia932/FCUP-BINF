@@ -1,2 +1,0 @@
-import NucleicAcid
-import ORF

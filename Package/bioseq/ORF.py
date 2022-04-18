@@ -1,4 +1,4 @@
-from BioSequence import BioSequence
+from .BioSequence import BioSequence
 
 import re
 
