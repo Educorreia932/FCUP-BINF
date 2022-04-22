@@ -81,6 +81,34 @@ class Alignment:
 
         return (S, T)
 
+    def recover_align(self, T):
+        # alignment are two strings
+        res = ["", ""]
+        i = len(self.seq1)
+        j = len(self.seq2)
+
+        while i > 0 or j > 0:
+            # Diagonal move
+            if T[i][j] == 1:    
+                res[0] = self.seq1[i - 1] + res[0]  # add to align of seq1 a symbol from seq1(i-1)
+                res[1] = self.seq2[j - 1] + res[1]  # add to align of seq2 a symbol from seq2(i-1)
+                i -= 1
+                j -= 1
+
+            # Horizontal move
+            elif T[i][j] == 3:  
+                res[0] = "-" + res[0]   # insert gap na seq 1
+                res[1] = self.seq2[j - 1] + res[1]  # insert symbol from seq2
+                j -= 1
+
+            # Vertical move
+            else:               
+                res[0] = self.seq1[i - 1] + res[0]  # insert symbol from seq1
+                res[1] = "-" + res[1]  # insert gap na seq 2
+                i -= 1
+                
+        return res
+
     # Local alignment
     def smith_waterman(self):
         S = [[0]]
