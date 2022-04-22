@@ -54,7 +54,7 @@ class AlignmentAlgorithm:
             else:
                 return 3
 
-   
+
 # Global alignment
 class NeedlemanWunsch(AlignmentAlgorithm):
     def calculate(self):
@@ -109,6 +109,7 @@ class NeedlemanWunsch(AlignmentAlgorithm):
 
         return res
 
+
 # Local alignment
 class SmithWaterman(AlignmentAlgorithm):
     def calculate(self):
@@ -145,3 +146,30 @@ class SmithWaterman(AlignmentAlgorithm):
                         maxscore = b
 
         return (S, T, maxscore)
+
+    def recover_align():
+        """Recover one of the optimal alignments"""
+        res = ["", ""]
+
+        # Determine the cell with max score
+        i, j = max_mat(self.S)
+
+        # Terminates when finds a cell with zero
+        while self.T[i][j] > 0:
+            if self.T[i][j] == 1:
+                res[0] = self.seq1[i - 1] + res[0]
+                res[1] = self.seq2[j - 1] + res[1]
+                i -= 1
+                j -= 1
+
+            elif self.T[i][j] == 3:
+                res[0] = "-" + res[0]
+                res[1] = self.seq2[j - 1] + res[1]
+                j -= 1
+
+            elif self.T[i][j] == 2:
+                res[0] = self.seq1[i - 1] + res[0]
+                res[1] = "-" + res[1]
+                i -= 1
+
+        return res
