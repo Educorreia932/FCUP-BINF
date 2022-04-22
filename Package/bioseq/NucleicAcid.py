@@ -99,10 +99,6 @@ class DNA(NucleicAcid):
     def transcribe(self) -> RNA:
         return RNA(self.sequence.replace("T", "U"))
 
-    @staticmethod
-    def read_from_fasta():
-        return DNA()
-
 
 class RNA(NucleicAcid):
     def __init__(self, sequence: str):

@@ -1,17 +1,8 @@
 # bioseq
 
+A Python package that handles biological sequences.
+
 ## Instructions
-
-Create a new virtual environment.
-
-```sh
-python -m venv binf-env
-.\binf-env\Scripts\activate
-```
-
-```sh
-pip install wheel
-```
 
 ```sh
 pip install .
