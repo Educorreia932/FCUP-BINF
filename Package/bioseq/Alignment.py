@@ -1,5 +1,5 @@
 
-class Alignment:
+class AlignmentAlgorithm:
     def __init__(self, seq1: str, seq2: str, gap: int, submat_file="blosum62.mat"):
         self.seq1 = seq1
         self.seq2 = seq2
@@ -8,7 +8,7 @@ class Alignment:
 
     def read_submat_file(self, filename):
         """Read substitution matrix from file """
-        
+
         self.sm = {}
 
         with open(filename, "r") as f:
@@ -19,15 +19,15 @@ class Alignment:
 
             for i in range(0, ns):
                 alphabet.append(tokens[i][0])
-            
+
             for i in range(0, ns):
                 line = f.readline()
                 tokens = line.split("\t")
-                
+
                 for j in range(0, len(tokens)):
                     k = alphabet[i] + alphabet[j]
                     self.sm[k] = int(tokens[j])
-        
+
     def score_position(self, c1, c2):
         """Score of a position (column)"""
 
@@ -46,42 +46,42 @@ class Alignment:
 
             else:
                 return 3
-        
+
         else:
             if v2 > v3:
                 return 2
-            
+
             else:
                 return 3
 
-    # Global alignment
-    def needleman_wunsch(self):
-        S = [[0]]
-        T = [[0]]
+   
+# Global alignment
+class NeedlemanWunsch(AlignmentAlgorithm):
+    def calculate(self):
+        self.S = [[0]]
+        self.T = [[0]]
 
         # Initialize gaps in rows
         for j in range(1, len(self.seq2) + 1):
-            S[0].append(self.gap * j)
-            T[0].append(3)  # horizontal move: 3
-        
+            self.S[0].append(self.gap * j)
+            self.T[0].append(3)  # horizontal move: 3
+
         # Initialize gaps in cols
         for i in range(1, len(self.seq1) + 1):
-            S.append([self.gap * i])
-            T.append([2])  # vertical move: 2
-        
+            self.S.append([self.gap * i])
+            self.T.append([2])  # vertical move: 2
+
         # Apply the recurrence to fill the matrices
         for i in range(0, len(self.seq1)):
             for j in range(len(self.seq2)):
-                s1 = S[i][j] + self.score_position(self.seq1[i], self.seq2[j])  # Diagonal
-                s2 = S[i][j + 1] + self.gap                                                        # Vertical
-                s3 = S[i + 1][j] + self.gap                                                        # Horizontal
+                s1 = self.S[i][j] + self.score_position(self.seq1[i], self.seq2[j])  # Diagonal
+                s2 = self.S[i][j + 1] + self.gap                                     # Vertical
+                s3 = self.S[i + 1][j] + self.gap                                     # Horizontal
 
-                S[i + 1].append(max(s1, s2, s3))  # na matrix score add max value
-                T[i + 1].append(self.max3t(s1, s2, s3))
+                self.S[i + 1].append(max(s1, s2, s3))  # na matrix score add max value
+                self.T[i + 1].append(self.max3t(s1, s2, s3))
 
-        return (S, T)
-
-    def recover_align(self, T):
+    def recover_align(self):
         # alignment are two strings
         res = ["", ""]
         i = len(self.seq1)
@@ -89,28 +89,29 @@ class Alignment:
 
         while i > 0 or j > 0:
             # Diagonal move
-            if T[i][j] == 1:    
+            if self.T[i][j] == 1:
                 res[0] = self.seq1[i - 1] + res[0]  # add to align of seq1 a symbol from seq1(i-1)
                 res[1] = self.seq2[j - 1] + res[1]  # add to align of seq2 a symbol from seq2(i-1)
                 i -= 1
                 j -= 1
 
             # Horizontal move
-            elif T[i][j] == 3:  
+            elif self.T[i][j] == 3:
                 res[0] = "-" + res[0]   # insert gap na seq 1
                 res[1] = self.seq2[j - 1] + res[1]  # insert symbol from seq2
                 j -= 1
 
             # Vertical move
-            else:               
+            else:
                 res[0] = self.seq1[i - 1] + res[0]  # insert symbol from seq1
                 res[1] = "-" + res[1]  # insert gap na seq 2
                 i -= 1
-                
+
         return res
 
-    # Local alignment
-    def smith_waterman(self):
+# Local alignment
+class SmithWaterman(AlignmentAlgorithm):
+    def calculate(self):
         S = [[0]]
         T = [[0]]
         maxscore = 0
@@ -142,6 +143,5 @@ class Alignment:
 
                     if b > maxscore:
                         maxscore = b
-        
-        return (S, T, maxscore)
 
+        return (S, T, maxscore)
