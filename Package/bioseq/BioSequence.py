@@ -20,13 +20,10 @@ class BioSequence():
         with open(filename) as fasta:
             for line in fasta.readlines():
                 if line[0] == ">":
-                    identifier = line[1:].strip()
-
                     if current_sequence != "":
                         sequences[identifier] = current_sequence
-
+                    identifier = line[1:].strip()
                     current_sequence = ""
-
                 else:
                     current_sequence += line.strip()
 

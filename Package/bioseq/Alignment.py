@@ -5,6 +5,9 @@ class AlignmentAlgorithm:
         self.seq2 = seq2
         self.gap = gap
         self.read_submat_file(submat_file)
+        self.S = None
+        self.T = None
+        self._score = None
 
     def read_submat_file(self, filename):
         """Read substitution matrix from file """
@@ -54,6 +57,10 @@ class AlignmentAlgorithm:
             else:
                 return 3
 
+    @property
+    def alignment_score(self):
+        return self._score
+
 
 # Global alignment
 class NeedlemanWunsch(AlignmentAlgorithm):
@@ -80,6 +87,8 @@ class NeedlemanWunsch(AlignmentAlgorithm):
 
                 self.S[i + 1].append(max(s1, s2, s3))  # na matrix score add max value
                 self.T[i + 1].append(self.max3t(s1, s2, s3))
+        
+        self._score = self.S[-1][-1]
 
     def recover_align(self):
         # alignment are two strings
@@ -144,15 +153,20 @@ class SmithWaterman(AlignmentAlgorithm):
 
                     if b > maxscore:
                         maxscore = b
+                        maxmat = (i, j)
 
+        self.S = S
+        self.T = T
+        self._score = maxscore
+        self.maxmat = maxmat
         return (S, T, maxscore)
 
-    def recover_align():
+    def recover_align(self):
         """Recover one of the optimal alignments"""
         res = ["", ""]
 
         # Determine the cell with max score
-        i, j = max_mat(self.S)
+        i, j = self.maxmat
 
         # Terminates when finds a cell with zero
         while self.T[i][j] > 0:
