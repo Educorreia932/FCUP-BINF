@@ -25,7 +25,7 @@ def count_mismatches(s1, s2):
 
 score_matrix = []
 
-for i, p1 in enumerate(list(proteins.items())):
+for i, p1 in enumerate(list(proteins.items())): # Para alterar!!
     score_matrix.append([])
 
     # Add elements that were already calculated
@@ -33,7 +33,7 @@ for i, p1 in enumerate(list(proteins.items())):
     for j in range(0, i):
         score_matrix[-1].append(score_matrix[j][i])
 
-    for p2 in list(proteins.items())[i:]:
+    for p2 in list(proteins.items())[i:]: # Para alterar
         needleman_wunsch = NeedlemanWunsch(p1[1], p2[1], -8)
         needleman_wunsch.calculate()
 
@@ -51,6 +51,7 @@ for score in scores_list:
 
 # 3)
 
+protein_names = [list(proteins.keys())[i].split(" ")[0] for i in range(len(proteins))]
 mismatch_matrix = []
 
 for i, _ in enumerate(score_matrix):
@@ -60,13 +61,16 @@ for i, _ in enumerate(score_matrix):
         mismatch_matrix[-1].append(count_mismatches(*p2[2]))
 
 def plot_matrix(matrix):
-    print("{}".format("".join('\t' + str(i) for i in range(len(matrix[0])))))
+    #print("\t\t{:^10}".format("".join('\t' + protein_names[i] for i in range(len(protein_names)))))
+    print("\t\t\t  {}".format(protein_names[0]), end="")
+    print("%16s"*9 % tuple(protein_names[1:]))
 
     for i, p1 in enumerate(matrix):
-        print(f"{i}\t", end="")
+        print("{:>22}\t".format(protein_names[i]), end="")
 
         for j, p2 in enumerate(matrix[i]):
-            print(f"{matrix[i][j]}\t", end="")
+            #print("{:^15}".format(matrix[i][j]), end="")
+            print("%16s" % matrix[i][j], end="")
 
         print()
 
@@ -74,13 +78,14 @@ print()
 print("Exercise 3:")
 
 print()
-print("Scores matrix:")
+print("\tScores matrix:")
 print()
 
 plot_matrix([[p[1] for p in row] for row in score_matrix])
 
 print()
-print("Mismatches matrix:")
+print()
+print("\tMismatches matrix:")
 print()
 
 plot_matrix(mismatch_matrix)
