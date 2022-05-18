@@ -1,0 +1,2 @@
+class Blast:
+    pass

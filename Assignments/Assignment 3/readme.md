@@ -1,12 +1,14 @@
 # Assignment 3
 
+Analyze	the	genomic	sequence of	the	SARS-CoV2 virus	to identify	the	putative proteins. The goal	is to identify all possible	ORFs.
+
 ## How to run
 
 ```sh
 python run.py sequence.fasta
 ```
 
-## Exercise
+## Exercises
 
 ### Exercise 1
 
@@ -29,13 +31,13 @@ GC Content: 0.3797277865097147
 ### Exercise 4
 
 ```py
-Nr Start Codons in Poistive Reading Frames: 725
+Number of Start Codons in Positive Reading Frames: 725
 ```
  
 ### Exercise 5
 
 ```py
-Nr Stop Codons in Poistive Reading Frames: 1776
+Number of Stop Codons in Positive Reading Frames: 1776
 ```
  
 ### Exercise 6

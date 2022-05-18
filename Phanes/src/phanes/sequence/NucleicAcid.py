@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from .BioSequence import BioSequence
 from .ORF import ORF
+from .BioSequence import BioSequence
 
 import re
 
@@ -55,7 +55,7 @@ class NucleicAcid(BioSequence):
 
                 current_orf = ""
 
-            # Start codon or on-going sequence
+            # Start codon or ongoing sequence
             elif aminoacid == "M" or current_orf != "":
                 current_orf += aminoacid
 

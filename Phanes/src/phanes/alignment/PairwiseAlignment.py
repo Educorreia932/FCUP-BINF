@@ -1,6 +1,9 @@
+import abc
 
-class AlignmentAlgorithm:
+
+class PairwiseAlignment:
     def __init__(self, seq1: str, seq2: str, gap: int, submat_file="blosum62.mat"):
+        self.sm = None
         self.seq1 = seq1
         self.seq2 = seq2
         self.gap = gap
@@ -10,7 +13,7 @@ class AlignmentAlgorithm:
         self._score = None
 
     def read_submat_file(self, filename):
-        """Read substitution matrix from file """
+        """Read substitution matrix from file"""
 
         self.sm = {}
 
@@ -40,7 +43,8 @@ class AlignmentAlgorithm:
         else:
             return self.sm[c1 + c2]
 
-    def max3t(self, v1, v2, v3):
+    @staticmethod
+    def max3t(v1, v2, v3):
         """Provides the integer to fill in T"""
 
         if v1 > v2:
@@ -61,9 +65,13 @@ class AlignmentAlgorithm:
     def alignment_score(self):
         return self._score
 
+    @abc.abstractmethod
+    def recover_align(self) -> list[str]:
+        pass
+
 
 # Global alignment
-class NeedlemanWunsch(AlignmentAlgorithm):
+class NeedlemanWunsch(PairwiseAlignment):
     def calculate(self):
         self.S = [[0]]
         self.T = [[0]]
@@ -82,12 +90,12 @@ class NeedlemanWunsch(AlignmentAlgorithm):
         for i in range(0, len(self.seq1)):
             for j in range(len(self.seq2)):
                 s1 = self.S[i][j] + self.score_position(self.seq1[i], self.seq2[j])  # Diagonal
-                s2 = self.S[i][j + 1] + self.gap                                     # Vertical
-                s3 = self.S[i + 1][j] + self.gap                                     # Horizontal
+                s2 = self.S[i][j + 1] + self.gap  # Vertical
+                s3 = self.S[i + 1][j] + self.gap  # Horizontal
 
                 self.S[i + 1].append(max(s1, s2, s3))  # na matrix score add max value
                 self.T[i + 1].append(self.max3t(s1, s2, s3))
-        
+
         self._score = self.S[-1][-1]
 
     def recover_align(self):
@@ -106,7 +114,7 @@ class NeedlemanWunsch(AlignmentAlgorithm):
 
             # Horizontal move
             elif self.T[i][j] == 3:
-                res[0] = "-" + res[0]   # insert gap na seq 1
+                res[0] = "-" + res[0]  # insert gap na seq 1
                 res[1] = self.seq2[j - 1] + res[1]  # insert symbol from seq2
                 j -= 1
 
@@ -120,7 +128,7 @@ class NeedlemanWunsch(AlignmentAlgorithm):
 
 
 # Local alignment
-class SmithWaterman(AlignmentAlgorithm):
+class SmithWaterman(PairwiseAlignment):
     def calculate(self):
         S = [[0]]
         T = [[0]]
@@ -159,7 +167,8 @@ class SmithWaterman(AlignmentAlgorithm):
         self.T = T
         self._score = maxscore
         self.maxmat = maxmat
-        return (S, T, maxscore)
+
+        return S, T, maxscore
 
     def recover_align(self):
         """Recover one of the optimal alignments"""

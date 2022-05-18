@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import re
 
-class BioSequence():
+class BioSequence:
     def __init__(self, sequence: str):
         if type(self) == BioSequence:
             raise Exception("BioSequence must be subclassed.")
 
-        if not self.validate(sequence):
+        elif not self.validate(sequence):
             raise Exception("Sequence is not valid")
 
         self.sequence = sequence
@@ -24,6 +23,7 @@ class BioSequence():
                         sequences[identifier] = current_sequence
                     identifier = line[1:].strip()
                     current_sequence = ""
+
                 else:
                     current_sequence += line.strip()
 
@@ -36,4 +36,3 @@ class BioSequence():
 
     def __str__(self) -> str:
         return self.sequence
-        

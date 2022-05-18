@@ -1,3 +1,6 @@
+> Phanes was the primordial god of creation. He was the generator of life the driving force behind reproduction in the
+> early cosmos.
+
 <div align="center">
 <img src="orphic_egg.png" alt="Orphic Egg" />
 </div>
@@ -6,10 +9,7 @@
 
 A library that handles biological sequences.
 
-> Phanes was the primordial god of creation. He was the generator of life the driving force behind reproduction in the
-> early cosmos.
-
-## How to use
+## Installation
 
 To install it locally, run the following command, from the package's root folder:
 

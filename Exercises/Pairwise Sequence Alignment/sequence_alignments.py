@@ -291,17 +291,21 @@ def test_local_alig():
     sm = read_submat_file("blosum62.mat")
     seq1 = "PHSWG"
     seq2 = "HGWAG"
+
     res = smith_Waterman(seq1, seq2, sm, -8)
     S = res[0]
     T = res[1]
+
     print("Score of optimal alignment:", res[2])
     print_mat(S)
     print_mat(T)
+
     alinL = recover_align_local(S, T, seq1, seq2)
     print(alinL[0])
     print(alinL[1])
-    i, j = max_mat(S)  # from Score matrix get the indices i,j from cell with max value
-    best_score = S[i][j]  # best score of the alignment from cell i,j
+    i, j = max_mat(S)     # From Score matrix get the indices i, j from cell with max value
+    best_score = S[i][j]  # best score of the alignment from cell i, j
+
     print("best score: " + str(best_score))
 
 
