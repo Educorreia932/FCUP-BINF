@@ -1,6 +1,6 @@
 import unittest
 
-from Phanes.src.phanes import DNA, RNA
+from phanes.sequence import DNA, RNA
 
 
 class TestDNA(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 
-from Phanes.src.phanes import AlignedSequences, NeedlemanWunsch
+from phanes import NeedlemanWunsch, AlignedSequences
 
 
 class TestAlignment(unittest.TestCase):

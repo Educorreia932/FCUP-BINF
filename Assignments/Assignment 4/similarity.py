@@ -4,8 +4,8 @@ Eduardo Correia - up201806433
 Filipe Justiça - up201606339 
 """
 
-from bioseq.BioSequence import BioSequence
-from bioseq.Alignment import NeedlemanWunsch, SmithWaterman
+from phanes import BioSequence
+from phanes import NeedlemanWunsch, SmithWaterman
 
 proteins = BioSequence.read_fasta("glycoproteinS.fas")
 
@@ -26,7 +26,7 @@ def count_mismatches(s1, s2):
 def calculate_score_matrix(proteins, algorithm):
     score_matrix = []
 
-    for i, p1 in enumerate(list(proteins.items())):  # Para alterar!!
+    for i, p1 in enumerate(list(proteins.items())):
         score_matrix.append([])
 
         # Add elements that were already calculated
@@ -34,7 +34,7 @@ def calculate_score_matrix(proteins, algorithm):
         for j in range(0, i):
             score_matrix[-1].append(score_matrix[j][i])
 
-        for p2 in list(proteins.items())[i:]:  # Para alterar
+        for p2 in list(proteins.items())[i:]:
             alignment = algorithm(p1[1], p2[1], -8)
             alignment.calculate()
 
@@ -67,6 +67,7 @@ def plot_matrix(matrix, protein_names):
 
         print()
 
+
 # 1)
 
 
@@ -86,7 +87,6 @@ for score in scores_list:
 # 3)
 
 protein_names = [list(proteins.keys())[i].split(" ")[0] for i in range(len(proteins))]
-
 
 print("\nExercise 3:")
 print("\n\tScores matrix:\n")
