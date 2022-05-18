@@ -83,7 +83,7 @@ class DNA(NucleicAcid):
         BioSequence.__init__(self, sequence)
 
     @staticmethod
-    def validate(sequence):
+    def validate(sequence: str) -> bool:
         return bool(re.match(r"^[ACGT]+$", sequence))
 
     def reverse_complement(self) -> DNA:
@@ -105,7 +105,7 @@ class RNA(NucleicAcid):
         BioSequence.__init__(self, sequence)
 
     @staticmethod
-    def validate(sequence):
+    def validate(sequence: str) -> bool:
         return bool(re.match(r"^[ACGU]+$", sequence))
 
     def transcribe(self) -> DNA:

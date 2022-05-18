@@ -1,2 +1,2 @@
 from .sequence import DNA, RNA
-from .alignment import AlignedSequences
+from .alignment import AlignedSequences, NeedlemanWunsch

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 class BioSequence:
     def __init__(self, sequence: str):
         if type(self) == BioSequence:
