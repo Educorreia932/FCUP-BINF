@@ -14,3 +14,16 @@ class AlignedSequences:
             result += most_frequent[0]
 
         return result
+
+    def __len__(self) -> int:
+        return len(self.sequences)
+
+    def __getitem__(self, n):
+        if type(n) is tuple and len(n) == 2:
+            i, j = n
+            return self.sequences[i][j]
+
+        elif type(n) is int:
+            return self.sequences[n]
+
+        return None

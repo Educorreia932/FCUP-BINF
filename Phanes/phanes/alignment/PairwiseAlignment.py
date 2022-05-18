@@ -1,6 +1,9 @@
 import abc
 import os
 
+from .AlignedSequences import AlignedSequences
+
+
 class PairwiseAlignment:
     def __init__(self, seq1: str, seq2: str, gap: int, submat_file="blosum62.mat"):
         self.sm = None
@@ -100,7 +103,7 @@ class NeedlemanWunsch(PairwiseAlignment):
 
         self._score = self.S[-1][-1]
 
-    def recover_align(self):
+    def recover_align(self) -> AlignedSequences:
         # alignment are two strings
         res = ["", ""]
         i = len(self.seq1)
@@ -126,7 +129,7 @@ class NeedlemanWunsch(PairwiseAlignment):
                 res[1] = "-" + res[1]  # insert gap na seq 2
                 i -= 1
 
-        return res
+        return AlignedSequences(res)
 
 
 # Local alignment
