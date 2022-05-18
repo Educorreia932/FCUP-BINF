@@ -1,5 +1,5 @@
 import abc
-
+import os
 
 class PairwiseAlignment:
     def __init__(self, seq1: str, seq2: str, gap: int, submat_file="blosum62.mat"):
@@ -17,7 +17,9 @@ class PairwiseAlignment:
 
         self.sm = {}
 
-        with open(filename, "r") as f:
+        filepath = os.path.join(os.path.dirname(__file__), filename)
+
+        with open(filepath, "r") as f:
             line = f.readline()
             tokens = line.split("\t")
             ns = len(tokens)
