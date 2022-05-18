@@ -1,24 +1,28 @@
 import unittest
 
-from Phanes.src.phanes import DNA
+from Phanes.src.phanes import DNA, RNA
 
 
 class TestDNA(unittest.TestCase):
     def setUp(self):
-        self.sequence = DNA("ATGAAATTATGAATGAGCCTCAGCTGAAGCATCGCGCATCAGACTACGCTCAGACTCAGACTCAGCATTATAGTGAATGTTAATAAATAAAATAA")
+        self.sequence = DNA(
+            "ATGAAATTATGAATGAGCCTCAGCTGAAGCATCGCGCATCAGACTACGCTCAGACTCAGACTCAGCATTATAGTGAATGTTAATAAATAAAATAA")
+
+    def test_length(self):
+        length = 95
+
+        self.assertEqual(length, len(self.sequence))
 
     def test_reverse_complement(self):
-        reverse_complement = DNA("TTATTTTATTTATTAACATTCACTATAATGCTGAGTCTGAGTCTGAGCGTAGTCTGATGCGCGATGCTTCAGCTGAGGCTCATTCATAATTTCAT")
+        reverse_complement = DNA(
+            "TTATTTTATTTATTAACATTCACTATAATGCTGAGTCTGAGTCTGAGCGTAGTCTGATGCGCGATGCTTCAGCTGAGGCTCATTCATAATTTCAT")
 
-        self.assertEqual(reverse_complement, self.sequence)
+        self.assertEqual(reverse_complement, self.sequence.reverse_complement())
 
-    # def test(self):
-    #     print(f"Sequence: {dna}")
-    #     print(f"Length: {len(dna)}")
-    #     print(f"RNA: {dna.transcribe()}")
-    #     print(f"Reverse complement: {dna.reverse_complement()}")
-    #
-    #     self.assertEqual((5), 6)
+    def test_rna(self):
+        rna = RNA("AUGAAAUUAUGAAUGAGCCUCAGCUGAAGCAUCGCGCAUCAGACUACGCUCAGACUCAGACUCAGCAUUAUAGUGAAUGUUAAUAAAUAAAAUAA")
+
+        self.assertEqual(rna, self.sequence.transcribe())
 
 
 if __name__ == "__main__":

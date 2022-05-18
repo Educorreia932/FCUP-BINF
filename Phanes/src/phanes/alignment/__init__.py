@@ -1,3 +1,3 @@
-from AlignedSequences import AlignedSequences
-from MultipleAlignment import MultipleAlignment
-from PairwiseAlignment import PairwiseAlignment
+from .AlignedSequences import AlignedSequences
+from .MultipleAlignment import MultipleAlignment
+from .PairwiseAlignment import PairwiseAlignment

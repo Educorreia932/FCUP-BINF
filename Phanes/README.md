@@ -1,9 +1,9 @@
-> Phanes was the primordial god of creation. He was the generator of life the driving force behind reproduction in the
-> early cosmos.
-
 <div align="center">
 <img src="orphic_egg.png" alt="Orphic Egg" />
 </div>
+
+> Phanes was the primordial god of creation. He was the generator of life the driving force behind reproduction in the
+> early cosmos.
 
 # Phanes
 

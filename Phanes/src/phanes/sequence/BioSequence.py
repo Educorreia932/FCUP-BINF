@@ -36,3 +36,6 @@ class BioSequence:
 
     def __str__(self) -> str:
         return self.sequence
+
+    def __eq__(self, other):
+        return self.sequence == other.sequence
