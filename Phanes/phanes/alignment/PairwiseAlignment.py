@@ -5,20 +5,35 @@ from .AlignedSequences import AlignedSequences
 
 
 class PairwiseAlignment:
-    def __init__(self, seq1: str, seq2: str, gap: int, submat_file="blosum62.mat"):
+    def __init__(self, seq1: str = None, seq2: str = None, gap: int = -1, sm=None, submat_file="blosum62.mat"):
         self.sm = None
         self.seq1 = seq1
         self.seq2 = seq2
         self.gap = gap
-        self.read_submat_file(submat_file)
         self.S = None
         self.T = None
         self._score = None
 
-    def read_submat_file(self, filename):
+        if sm is None:
+            self.sm = self.read_submat_file(submat_file)
+
+        else:
+            self.sm = sm
+
+    def score_position(self, c1, c2):
+        """Score of a position (column)"""
+
+        if c1 == "-" or c2 == "-":
+            return self.gap
+
+        else:
+            return self.sm[c1 + c2]
+
+    @staticmethod
+    def read_submat_file(filename: str) -> dict:
         """Read substitution matrix from file"""
 
-        self.sm = {}
+        sm = {}
 
         filepath = os.path.join(os.path.dirname(__file__), filename)
 
@@ -37,16 +52,23 @@ class PairwiseAlignment:
 
                 for j in range(0, len(tokens)):
                     k = alphabet[i] + alphabet[j]
-                    self.sm[k] = int(tokens[j])
+                    sm[k] = int(tokens[j])
 
-    def score_position(self, c1, c2):
-        """Score of a position (column)"""
+        return sm
 
-        if c1 == "-" or c2 == "-":
-            return self.gap
+    @staticmethod
+    def create_submatrix(match: int, mismatch: int, alphabet: str) -> dict:
+        sm = {}
 
-        else:
-            return self.sm[c1 + c2]
+        for c1 in alphabet:
+            for c2 in alphabet:
+                if c1 == c2:
+                    sm[c1 + c2] = match
+
+                else:
+                    sm[c1 + c2] = mismatch
+
+        return sm
 
     @staticmethod
     def max3t(v1, v2, v3):
@@ -73,6 +95,10 @@ class PairwiseAlignment:
     @abc.abstractmethod
     def recover_align(self) -> list[str]:
         pass
+
+    def set_sequences(self, seq1, seq2):
+        self.seq1 = seq1
+        self.seq2 = seq2
 
 
 # Global alignment
