@@ -1,2 +1,2 @@
-from .sequence import DNA, RNA
-from .alignment import AlignedSequences, NeedlemanWunsch
+from .sequence import BioSequence, DNA, RNA
+from .alignment import AlignedSequences, NeedlemanWunsch, MultipleAlignment, SmithWaterman
