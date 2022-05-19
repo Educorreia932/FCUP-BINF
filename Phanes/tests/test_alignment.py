@@ -18,7 +18,7 @@ class TestAlignment(unittest.TestCase):
 
     def test_consensus(self):
         aligned = AlignedSequences(["ATAGC", "A-ACC"])
-        consensus = "ATACC"
+        consensus = "ATAGC"
 
         self.assertEqual(consensus, aligned.consensus())
 

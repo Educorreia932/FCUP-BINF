@@ -30,8 +30,6 @@ class MultipleAlignment:
 
                 origin += 1
 
-            print(result)
-
         result[len(aligned.sequences)] = aligned2.sequences[1]
 
         return AlignedSequences(result)
