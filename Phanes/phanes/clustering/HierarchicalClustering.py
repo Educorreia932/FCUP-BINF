@@ -1,6 +1,6 @@
 from copy import copy
 
-from clustering import BinaryTree, Matrix
+from . import BinaryTree, Matrix
 
 
 class HierarchicalClustering:
