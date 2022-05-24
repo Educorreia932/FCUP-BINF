@@ -4,9 +4,6 @@ from phanes import NeedlemanWunsch, AlignedSequences, MultipleAlignment
 
 
 class TestAlignment(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_global_alignment(self):
         seq1 = "PHSWG"
         seq2 = "HGWAG"
