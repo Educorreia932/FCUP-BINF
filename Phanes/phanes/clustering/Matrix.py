@@ -1,6 +1,10 @@
 class Matrix:
-    def __init__(self, rows: list):
-        self.matrix = [row for row in rows]
+    def __init__(self, rows):
+        if type(rows) == int:
+            self.matrix = [[0 for _ in range(rows)] for _ in range(rows)]
+
+        else:
+            self.matrix = [row for row in rows]
 
     def add_row(self, row: list):
         self.matrix.append(row)
@@ -36,4 +40,3 @@ class Matrix:
 
         else:
             self.matrix[j][i] = value
-

@@ -7,7 +7,7 @@ class HierarchicalClustering:
     def __init__(self, distance_matrix: Matrix):
         self.distance_matrix = copy(distance_matrix)
 
-    def calculate(self):
+    def calculate(self) -> BinaryTree:
         """
         Returns a tree based on distance matrix
         """

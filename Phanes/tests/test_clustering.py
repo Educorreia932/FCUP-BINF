@@ -1,5 +1,7 @@
 import unittest
 
+from clustering import UPGMA
+from phanes import PairwiseAlignment, NeedlemanWunsch
 from phanes import BinaryTree, Matrix, HierarchicalClustering
 
 
@@ -33,3 +35,19 @@ class TestClustering(unittest.TestCase):
         result = clustering.calculate()
 
         self.assertEqual(result.distance, 3.25)
+
+    def test_upgma(self):
+        sequences = [
+            "ATAG-C-",
+            "AT-GAC-",
+            "A-A--CG",
+            "A-AT-CG"
+        ]
+
+        substitution_matrix = PairwiseAlignment.create_submatrix(1, -1, "ACGT")
+        alignment = NeedlemanWunsch(sm=substitution_matrix, gap=-2)
+        upgma = UPGMA(sequences, alignment)
+
+        result = upgma.calculate()
+
+        self.assertEqual(result.distance, 2)

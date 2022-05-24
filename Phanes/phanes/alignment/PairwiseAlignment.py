@@ -92,13 +92,17 @@ class PairwiseAlignment:
     def alignment_score(self):
         return self._score
 
-    @abc.abstractmethod
-    def recover_align(self) -> list[str]:
-        pass
-
     def set_sequences(self, seq1, seq2):
         self.seq1 = seq1
         self.seq2 = seq2
+
+    @abc.abstractmethod
+    def recover_align(self) -> AlignedSequences:
+        pass
+
+    @abc.abstractmethod
+    def calculate(self):
+        pass
 
 
 # Global alignment
