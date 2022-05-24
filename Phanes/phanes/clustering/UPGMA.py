@@ -1,4 +1,4 @@
-from alignment import PairwiseAlignment
+from ..alignment import PairwiseAlignment
 from . import HierarchicalClustering, Matrix, BinaryTree
 
 
