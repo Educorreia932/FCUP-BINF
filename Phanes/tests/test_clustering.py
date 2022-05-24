@@ -1,6 +1,6 @@
 import unittest
 
-from clustering import UPGMA
+from phanes import UPGMA
 from phanes import PairwiseAlignment, NeedlemanWunsch
 from phanes import BinaryTree, Matrix, HierarchicalClustering
 
