@@ -1,10 +1,11 @@
 import unittest
 
+from phanes import Blast
+
 
 class TestAlignment(unittest.TestCase):
     def test(self):
-        mb = Blast("seqBlast.txt", 11)
-        query2 = "cgacgacgacgacgaatgatg"
-        r = mb.bestAlignment(query2)
+        blast = Blast("database.txt", 11)
+        query = "cgacgacgacgacgaatgatg"
 
-        print(r)
+        self.assertTupleEqual(blast.calculate(query), (0, 0, 21, 21, 4))
