@@ -1,3 +1,6 @@
 __pycache__/
 *.pdf
 .idea/
+*.venv
+*.ipynb_checkpoints
+*.egg-info
